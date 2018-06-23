@@ -1,17 +1,19 @@
-# Docker ELK stack
+# Elastic stack (ELK) on Docker
 
 [![Join the chat at https://gitter.im/deviantony/docker-elk](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/deviantony/docker-elk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Elastic Stack version](https://img.shields.io/badge/ELK-6.2.1-blue.svg?style=flat)](https://github.com/deviantony/docker-elk/issues/245)
+[![Elastic Stack version](https://img.shields.io/badge/ELK-6.3.0-blue.svg?style=flat)](https://github.com/deviantony/docker-elk/issues/286)
 [![Build Status](https://api.travis-ci.org/deviantony/docker-elk.svg?branch=x-pack)](https://travis-ci.org/deviantony/docker-elk)
 
-Run the latest version of the ELK (Elasticsearch, Logstash, Kibana) stack with Docker and Docker Compose.
+Run the latest version of the [Elastic stack](https://www.elastic.co/elk-stack) with Docker and Docker Compose.
 
-**Note**: This version has [X-Pack support](https://www.elastic.co/products/x-pack).
+**Note**: This version has [X-Pack support](https://www.elastic.co/products/x-pack) with [X-Pack
+security](https://www.elastic.co/guide/en/elasticsearch/reference/current/configuring-security.html) enabled. The [trial
+license](https://www.elastic.co/guide/en/elasticsearch/reference/current/license-settings.html) is valid for 30 days.
 
 It will give you the ability to analyze any data set by using the searching/aggregation capabilities of Elasticsearch
 and the visualization power of Kibana.
 
-Based on the official Docker images:
+Based on the official Docker images from Elastic:
 
 * [elasticsearch](https://github.com/elastic/elasticsearch-docker)
 * [logstash](https://github.com/elastic/logstash-docker)
@@ -22,6 +24,7 @@ Based on the official Docker images:
 1. [Requirements](#requirements)
    * [Host setup](#host-setup)
    * [SELinux](#selinux)
+   * [Docker for Windows](#docker-for-windows)
 2. [Getting started](#getting-started)
    * [Bringing up the stack](#bringing-up-the-stack)
    * [Initial setup](#initial-setup)
@@ -57,21 +60,23 @@ apply the proper context:
 $ chcon -R system_u:object_r:admin_home_t:s0 docker-elk/
 ```
 
+### Docker for Windows
+
+If you're using Docker for Windows, ensure the "Shared Drives" feature is enabled for the `C:` drive (Docker for Windows > Settings > Shared Drives). See [Configuring Docker for Windows Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) (MSDN Blog).
+
 ## Usage
 
 ### Bringing up the stack
 
-Start the ELK stack using `docker-compose`:
+**Note**: In case you switched branch or updated a base image - you may need to run `docker-compose build` first
+
+Start the stack using `docker-compose`:
 
 ```console
 $ docker-compose up
 ```
 
-You can also choose to run it in background (detached mode):
-
-```console
-$ docker-compose up -d
-```
+You can also run all services in the background (detached mode) by adding the `-d` flag to the above command.
 
 Give Kibana a few seconds to initialize, then access the Kibana web UI by hitting
 [http://localhost:5601](http://localhost:5601) with a web browser and use the following default credentials to login:
@@ -122,7 +127,7 @@ Create an index pattern via the Kibana API:
 ```console
 $ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
     -H 'Content-Type: application/json' \
-    -H 'kbn-version: 6.2.1' \
+    -H 'kbn-version: 6.3.0' \
     -u kibana:changeme \
     -d '{"attributes":{"title":"logstash-*","timeFieldName":"@timestamp"}}'
 ```
